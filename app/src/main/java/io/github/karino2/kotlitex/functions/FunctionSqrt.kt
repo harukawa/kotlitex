@@ -121,7 +121,18 @@ object FunctionSqrt {
 }
 
 class PathBuilder {
-    val path = Path()
+    val pathList = mutableListOf<Path>()
+
+    var _current: Path? = null
+
+    val path: Path
+        get() {
+            _current?.let { return it }
+            val newPath = Path()
+            pathList.add(newPath)
+            _current = newPath
+            return newPath
+        }
 
     var lastX = 0.0
     var lastY = 0.0
@@ -159,6 +170,7 @@ class PathBuilder {
 
     fun z() {
         path.close()
+        _current = null
         secondLastX = 0.0
         secondLastY = 0.0
     }
@@ -202,10 +214,10 @@ s-65,47,-65,47z M834 ${hLinePad}H400000v40H845z`,
                             s-65,47,-65,47z M834 80H400000v40H845z'/>
 
      */
-    fun build(body: PathBuilder.()->Unit ) : Path {
+    fun build(body: PathBuilder.()->Unit ) : List<Path> {
         val builder = PathBuilder()
         builder.body()
-        return builder.path
+        return builder.pathList
     }
 
 
@@ -213,8 +225,7 @@ s-65,47,-65,47z M834 ${hLinePad}H400000v40H845z`,
         build {
             M(95.0,702.0)
             c(-2.7,0.0,-7.17,-2.7,-13.5,-8.0)
-            c(-5.8,-5.3,-9.5,
-            -10.0,-9.5,-14.0)
+            c(-5.8,-5.3,-9.5, -10.0,-9.5,-14.0)
             c(0.0,-2.0,0.3,-3.3,1.0,-4.0)
             c(1.3,-2.7,23.83,-20.7,67.5,-54.0)
             c(44.2,-33.3,65.8, -50.3,66.5,-51.0)

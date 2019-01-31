@@ -133,13 +133,17 @@ private class MathExpressionDrawable(expr: String) : Drawable() {
                 // TODO: more suitable handling.
                 paint.color = Color.BLACK
                 paint.strokeWidth = 2.0f
-                paint.style = Paint.Style.FILL_AND_STROKE
+                paint.style = Paint.Style.STROKE
+                // paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)
 
                 val path = Path()
 
                 parent.rnode.children.forEach{
                     path.reset()
-                    path.addPath(it.path, mat)
+                    it.pathList.forEach {
+                        path.addPath(it, mat)
+                    }
+                    path.close()
                     canvas.drawPath(path, paint)
                 }
             }
