@@ -81,7 +81,12 @@ private class MathExpressionDrawable(expr: String) : Drawable() {
                 val (_, _, wb, hb) = parent.bounds
                 val dstBox = RectF(x, y, (x+wb).toFloat(), (y+hb).toFloat())
 
-                mat.setRectToRect(viewBoxF, dstBox, Matrix.ScaleToFit.START)
+                // this is preserveAspectRatio = meet
+                // mat.setRectToRect(viewBoxF, dstBox, Matrix.ScaleToFit.START)
+
+                // TODO: this is not slice!
+                mat.setRectToRect(viewBoxF, dstBox, Matrix.ScaleToFit.FILL)
+
 
                 /* trial code. Please remove once we reach to correct rendering.
 
