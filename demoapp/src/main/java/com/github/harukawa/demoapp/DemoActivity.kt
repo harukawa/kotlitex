@@ -8,7 +8,6 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -41,12 +40,16 @@ class DemoActivity : AppCompatActivity() {
             |End
         """.trimMargin())
 
-        var adapter: ArrayAdapter<String> = MarkListAdapter(this, data)
+        val adapter: ArrayAdapter<String> = MarkListAdapter(this, data)
 
         val listView: ListView = findViewById<ListView>(R.id.list)
         listView.setAdapter(adapter)
-        var listPosition:Int = 0
+
+        var listPosition: Int = 0
+        var isListClickFlag: Boolean = false
+
         listView.setOnItemClickListener() { _, view, position, id ->
+            isListClickFlag = true
             findViewById<TextView>(R.id.editText).text = data[position].toString()
             listPosition = position
         }
@@ -56,18 +59,20 @@ class DemoActivity : AppCompatActivity() {
             adapter.add("empty")
         }
 
-        var editText: EditText = findViewById<EditText>(R.id.editText)
-        editText.addTextChangedListener(object: TextWatcher{
+        val editText: EditText = findViewById<EditText>(R.id.editText)
+        editText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                //処理
-                data[listPosition] = s.toString()
-                adapter.notifyDataSetChanged()
+                if (isListClickFlag == false) {
+                    data[listPosition] = s.toString()
+                    adapter.notifyDataSetChanged()
+                }
+                isListClickFlag = false
             }
 
-            override fun beforeTextChanged(p0: CharSequence?, start: Int, count: Int, after: Int) {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
 
-            override fun onTextChanged(p0: CharSequence?, start: Int, before: Int, count: Int) {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
         })
     }
