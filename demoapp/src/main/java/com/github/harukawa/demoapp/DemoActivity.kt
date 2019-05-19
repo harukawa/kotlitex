@@ -3,6 +3,8 @@ package com.github.harukawa.demoapp
 import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +16,7 @@ import android.widget.ListView
 import android.widget.TextView
 import io.github.karino2.kotlitex.view.MarkdownView
 import io.github.karino2.kotlitex.view.MathExpressionSpan
+import kotlinx.android.synthetic.main.activity_demo.*
 
 data class ViewHolder(val markdownView: MarkdownView)
 
@@ -42,9 +45,10 @@ class DemoActivity : AppCompatActivity() {
 
         val listView: ListView = findViewById<ListView>(R.id.list)
         listView.setAdapter(adapter)
-
+        var listPosition:Int = 0
         listView.setOnItemClickListener() { _, view, position, id ->
             findViewById<TextView>(R.id.editText).text = data[position].toString()
+            listPosition = position
         }
 
         val button: Button = findViewById(R.id.button)
@@ -53,17 +57,19 @@ class DemoActivity : AppCompatActivity() {
         }
 
         var editText: EditText = findViewById<EditText>(R.id.editText)
-
-        editText.setOnEditorActionListener { v, actionId, event ->
-            when (actionId) {
-                EditorInfo.IME_ACTION_DONE -> {
-
-                    finish()
-                    true
-                }
-                else -> false
+        editText.addTextChangedListener(object: TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+                //処理
+                data[listPosition] = s.toString()
+                adapter.notifyDataSetChanged()
             }
-        }
+
+            override fun beforeTextChanged(p0: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+        })
     }
     fun createMathSpan(expr: String, baseSize: Float) =
         MathExpressionSpan(expr, baseSize, assets, true)
